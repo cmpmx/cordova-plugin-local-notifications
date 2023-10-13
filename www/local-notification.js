@@ -22,6 +22,8 @@
 var exec    = require('cordova/exec'),
     channel = require('cordova/channel');
 
+exports.version = '0.9.0-beta.4-mx-fork';
+
 // Defaults
 exports._defaults = {
     actions       : [],
