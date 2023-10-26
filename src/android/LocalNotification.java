@@ -23,6 +23,14 @@
 
 package de.appplant.cordova.plugin.localnotification;
 
+import static android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
+import static android.content.Context.POWER_SERVICE;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.M;
+import static de.appplant.cordova.plugin.notification.Notification.Type.SCHEDULED;
+import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
+
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -32,9 +40,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.net.Uri;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Pair;
@@ -53,20 +60,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
-
 import de.appplant.cordova.plugin.notification.Manager;
 import de.appplant.cordova.plugin.notification.Notification;
 import de.appplant.cordova.plugin.notification.Options;
 import de.appplant.cordova.plugin.notification.Request;
 import de.appplant.cordova.plugin.notification.action.ActionGroup;
-
-import static android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
-import static android.content.Context.POWER_SERVICE;
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.M;
-import static de.appplant.cordova.plugin.notification.Notification.Type.SCHEDULED;
-import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
 
 /**
  * This plugin utilizes the Android AlarmManager in combination with local
@@ -360,6 +358,18 @@ public class LocalNotification extends CordovaPlugin {
      * @param command The callback context used when calling back into JavaScript.
      */
     private void check(CallbackContext command) {
+
+        int PERMISSION_REQUEST_CODE =112;
+
+        if (Build.VERSION.SDK_INT > 32) {
+            Activity a = cordova.getActivity();
+            a.requestPermissions(
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    PERMISSION_REQUEST_CODE);
+            
+        }
+
+
         boolean allowed = getNotMgr().hasPermission();
         success(command, allowed);
     }
